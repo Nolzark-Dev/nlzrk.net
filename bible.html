@@ -21,6 +21,26 @@
             text-decoration: none;
         }
 
+
+
+        .center {
+        margin: 0 auto;
+        width: 90%;
+        max-width: 600px;
+        border: 3px solid black;
+        padding: 10px;
+        text-align: left;
+    }
+
+    .bible-translation-item a {
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+
+
+
+
         .nav {
             display: flex;
             justify-content: space-between;
@@ -95,6 +115,16 @@
             border-color: black;
         }
 
+
+
+
+
+
+
+
+
+        
+
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
@@ -139,19 +169,22 @@
         </div>
     </div>
 
+
     <div class="content">
         <div class="center">
             <p>Choose a translation to view:</p>
-
+    
             <div id="bible-translations">
                 <ul class="bible-translation-list">
-                    <li class="bible-translation-item active"><a href="kjv.txt">King James Version</a></li>
-                    <li class="bible-translation-item"><a href="esv.txt">English Standard Version</a></li>
-                    <li class="bible-translation-item"><a href="niv.txt">New International Version</a></li>
+                    <li class="bible-translation-item active"><a href="kjv.txt">KJV</a></li>
+                    <li class="bible-translation-item"><a href="esv.txt">ESV</a></li>
+                    <li class="bible-translation-item"><a href="niv.txt">NIV</a></li>
                 </ul>
             </div>
         </div>
     </div>
+
+
 
     <script>
         function toggleMenu() {
