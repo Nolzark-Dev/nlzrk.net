@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nolzark Website</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap">
+    <style>
+        body, html {
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            height: 100%;
+            overflow: auto;
+        }
+
+        a:link, a:visited, a:hover, a:focus, a:hover, a:active {
+            color: black;
+            background-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #fff;
+            border-bottom: 3px solid black;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .nav h2 {
+            margin: 0;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .mobile-menu-icon {
+            display: none;
+            cursor: pointer;
+            font-size: 24px;
+            margin-right: 10px; /* Adjusted margin to ensure visibility */
+        }
+
+        .content {
+            margin-top: 70px; /* To avoid overlap with the navbar */
+            padding: 20px;
+        }
+
+        .center {
+            margin: 0 auto;
+            width: 90%;
+            max-width: 600px;
+            border: 3px solid black;
+            padding: 10px;
+            text-align: left;
+        }
+
+        #bible-translations {
+            margin-top: 20px;
+        }
+
+        .bible-translation-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .bible-translation-item {
+            background-color: #f7f7f7;
+            border: 1px solid #ddd;
+            padding: 10px;
+            width: 150px;
+        }
+
+        .bible-translation-item.active {
+            background-color: #fff;
+            border-color: black;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                background-color: #fff;
+                position: absolute;
+                top: 50px;
+                left: 0;
+                width: 100%;
+                border-top: 3px solid black;
+            }
+
+            .nav-links a {
+                padding: 15px;
+                text-align: center;
+                border-bottom: 1px solid black;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .mobile-menu-icon {
+                display: block;
+                padding: 10px; /* Add padding to the icon */
+                position: relative;
+                z-index: 1001;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <h2><a href="index.html">nlzrk</a></h2>
+        <div class="mobile-menu-icon" onclick="toggleMenu()">☰</div>
+        <div class="nav-links active"></div>
+    </div>
+
+    <div class="content">
+        <div class="center">
+            <p>Choose a translation to view:</p>
+
+            <div id="bible-translations">
+                <ul class="bible-translation-list">
+                    <li class="bible-translation-item active"><a href="kjv.txt">King James Version</a></li>
+                    <li class="bible-translation-item"><a href="nasb.txt">New American Standard Bible</a></li>
+                    <li class="bible-translation-item"><a href="esv.txt">English Standard Version</a></li>
+                    <li class="bible-translation-item"><a href="niv.txt">New International Version</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
+        }
+
+        const bibleTransitionsList = document.querySelector('.bible-translation-list');
+
+        bibleTransitionsList.addEventListener('click', (e) => {
+            if (e.target.tagName === 'LI') {
+                e.preventDefault();
+                const activeItem = e.target;
+                const nonActiveItems = Array.from(bibleTransitionsList.children).filter((item) => item !== activeItem);
+
+                nonActiveItems.forEach((item) => {
+                    item.classList.remove('active');
+                });
+
+                activeItem.classList.add('active');
+
+                const link = activeItem.querySelector('a');
+                window.open(link.href, '_blank');
+            }
+        });
+    </script>
+</body>
+</html>
