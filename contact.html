@@ -1,356 +1,169 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Nolzark Website</title>
-
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap">
-    </head>
-
-
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
-    body,
-      html {
-        overflow: hidden;
-        font-family: 'JetBrains Mono', monospace;
-        
-      }
-
-     
-
-
-
-      a:link {
-  color: black;
-  background-color: transparent;
-  text-decoration: none;
-}
-      
-a { color: black } 
-
-a:visited { text-decoration: none; color:black; }
-a:hover { text-decoration: none; color:black; }
-a:focus { text-decoration: none; color:black; }
-a:hover, a:active { text-decoration: none; color:black }
-
-
-
-
-      a,
-      button,
-      input {
-        font-weight: var(--font-weight-body);
-      }
-    
-      .content {
-        display: grid;
-        columns: 1;
-        row-gap: 24px;
-        justify-items: left;
-
-        
-      }
-
-      .center {
-          margin-left: 300px;
-          margin-top: 290px;
-          top: 50px;
-          left: 50px;
-          width: 50%;
-          border: 3px solid black;
-          padding: 10px;
-          text-align: left;
-          position: absolute;
-      }
-    
-      .scene {
-        margin-top: 300px;
-      }
-
-
-
-      .nav {
-        padding-inline: 15px;
-        padding-top: 15px;
-        min-width: 220px;
-        text-align: center;
-        position: relative;
-      }
-    
-      .nav-item {
-        width: 18px;
-        fill: var(--color-secondary);
-        margin-inline: 10px;
-      }
-    
-      .link-title-wrapper {
-        margin-inline: 20px;
-      }
-    
-      a:hover > .link-title-wrapper {
-        background-color: var(--color-text);
-        color: var(--color-body);
-      }
-    
-      .nav-item:hover {
-        background-color: transparent;
-        fill: var(--color-text);
-      }
-    
-      .icon-list {
-        display: inline-flex;
-        margin-bottom: 2px;
-      }
-    
-      .menu-wrapper {
-        border: 3px solid black;
-        display: flex;
-        flex-direction: column;
-        line-height: 2.2;
-        text-align: left;
-        padding-inline: 15px;
-        margin-block: 10px;
-      }
-    
-      .sub-wrapper {
-        width: 224px;
-      }
-    
-      #mainmenu canvas {
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-        margin: auto;
-      }
-    
-      #mainmenu__content {
-        transition: opacity 0.4s;
-      }</style>
-
-
-
-  <body>
-    
-    
-
-    
-    <div class="brand-background child-center">
-  
-      <div class="content">
-        
-        <style data-shopify="">.logo_3D_wrapper {
-        width: 200px;
-        height: 200px;
-        position: relative;
-      }
-    
-      #logo-3D-canvas {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-    
-    
-    
-        
-    
-    
-    
-      .sub-base {
-        display: flex;
-        position: relative;
-        flex-direction: column;
-      }
-    
-      .sub-input-wrapper {
-        display: flex;
-        width: 100%;
-      }
-    
-      .sub-button {
-        width: 30px;
-        padding: 3px;
-        stroke: var(--color-secondary);
-        flex-shrink: 0;
-      }
-    
-      .sub-button:hover {
-        background-color: var(--color-secondary);
-        stroke: var(--color-text);
-      }
-      .form__message {
-        position: relative;
-        background-color: black;
-        transition: opacity 0.5s ease-in-out;
-      }
-    
-      .form__message > span {
-        position: absolute;
-        top: -18px;
-        inset-inline: 0;
-        text-align: center;
-      }
-    
-      .form__error {
-        color: #ef2917;
-      }
-    
-      .form__success {
-        color: #3c763d;
-      }
-    
-      .fade-animation {
-        animation: fade 3s ease-in-out forwards;
-      }
-    
-      @keyframes fade {
-        0% {
-          opacity: 0;
+        body, html {
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            height: 100%;
+            overflow: auto;
+            background-color: black;
+            color: white;
         }
-    
-        10% {
-          opacity: 1;
+
+        a:link, a:visited, a:hover, a:focus, a:hover, a:active {
+            color: white;
+            background-color: transparent;
+            text-decoration: none;
         }
-    
-        90% {
-          opacity: 1;
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-bottom: 3px solid white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-sizing: border-box;
         }
-        100% {
-          opacity: 0;
+
+        .nav h2 {
+            margin: 0;
         }
-      }
 
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
 
+        .nav-links a {
+            padding: 10px;
+            box-sizing: border-box;
+        }
 
+        .mobile-menu-icon {
+            display: none;
+            cursor: pointer;
+            font-size: 24px;
+            margin-right: 10px;
+        }
 
+        #scene-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
 
+        .content {
+            margin-top: 70px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 70px);
+        }
 
-      
+        .center {
+            margin: 0 auto;
+            width: 90%;
+            max-width: 600px;
+            border: 3px solid white;
+            padding: 10px;
+            text-align: left;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .github-link {
+            margin-top: 20px;
+        }
+
+        .github-link svg {
+            fill: white;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                background-color: rgba(0, 0, 0, 0.9);
+                position: absolute;
+                top: 50px;
+                left: 0;
+                width: 100%;
+                border-top: 3px solid white;
+            }
+
+            .nav-links a {
+                padding: 15px;
+                text-align: center;
+                border-bottom: 1px solid white;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .mobile-menu-icon {
+                display: block;
+                padding: 10px;
+                position: relative;
+                z-index: 1001;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+        }
     </style>
-    
-
-    
-    
-
-
-
- <div class="scene">
-
-
-    <div class="center">
-
-
-    <center>
-      <h1>Contact</h1>
-    </center>
-      
-      <p>
-        
-Email: hunterbalderson@gmail.com 
- 
-
-      </p>
-
-      
-      
-     
-     
-   
-
-
-    
-
-</div>
-
-
-
-
-
-
-
-
-        <div id="mainmenu" class="nav blurdrop base-border">
-          <div id="mainmenu__content">
-            <div class="menu-wrapper">
-              
-              
-
-              <center>
-              <h2>nlzrk</h2>  
-              </center>
-
-
-              <a href="index.html">
-                <span class="link-title-wrapper">
-                  home
-                </span>
-              </a>
-            
-          
-              <a href="resume.pdf">
-                <span class="link-title-wrapper">
-                  resume / cv
-                </span>
-              </a>
-             
-            
-          
-            
-              
-            
-          
-            
-              
-            
-          
-            
-              <a href="about.html">
-                <span class="link-title-wrapper">
-                  about me
-                </span>
-              </a>
-            
-          
-            
-              <a href="contact.html">
-                <span class="link-title-wrapper">
-                  contact
-                </span>
-              </a>
-            
-          
-            
-             
-            
-          
-            
-              
-                </br>
-                
-              
-            </div>
-            <br>
-           
-  
-  </div>
-          </div>
+</head>
+<body>
+    <div class="nav">
+        <h2><a href="index.html">nlzrk</a></h2>
+        <div class="mobile-menu-icon" onclick="toggleMenu()">☰</div>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">home</a>
+            <a href="resume.pdf">resume / cv</a>
+            <a href="bible.html">holy bible</a>
+            <a href="secret.html">secret</a>
         </div>
-      </div>
     </div>
 
-
-   
-  </div>
-
-
+    <div id="scene-container"></div>
     
-  </body>
+    <div class="content">
+   
+            <h1>contact</h1>
+            <p>email: hunterbalderson@nlzrk.net</p>
+            
+      
+        <a class="github-link" target="_blank" href="https://github.com/Nolzark-Dev" title="GitHub">
+            <svg aria-hidden="true" class="octicon octicon-mark-github" height="24" version="1.1" viewBox="0 0 16 16" width="24"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg>
+        </a>
+    </div>
+
+    <script>
+     function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
+        }
+
+        init();
+</script>
+
+
+</body>
 </html>
-
-
-<!--
-  Get a life lol - Nolzark dev
- -->
