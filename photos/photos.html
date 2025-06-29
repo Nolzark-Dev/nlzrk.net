@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nlzrk / gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            position: relative;
+            min-height: 100vh;
+            perspective: 1200px;
+        }
+
+        .bg-cube {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 500px;
+            height: 500px;
+            transform: translate(-50%, -50%) rotateX(25deg) rotateY(-25deg);
+            transform-style: preserve-3d;
+            animation: cubeRotate 20s linear infinite;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        .cube-face {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(45deg, 
+                rgba(255,255,255,0.1) 0%, 
+                rgba(255,255,255,0.05) 25%,
+                rgba(255,255,255,0.02) 50%,
+                rgba(255,255,255,0.05) 75%,
+                rgba(255,255,255,0.1) 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            background-size: 20px 20px;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+        }
+
+        .cube-face:nth-child(1) { transform: rotateY(0deg) translateZ(250px); }
+        .cube-face:nth-child(2) { transform: rotateY(90deg) translateZ(250px); }
+        .cube-face:nth-child(3) { transform: rotateY(180deg) translateZ(250px); }
+        .cube-face:nth-child(4) { transform: rotateY(-90deg) translateZ(250px); }
+        .cube-face:nth-child(5) { transform: rotateX(90deg) translateZ(250px); }
+        .cube-face:nth-child(6) { transform: rotateX(-90deg) translateZ(250px); }
+
+        @keyframes cubeRotate {
+            0% { transform: translate(-50%, -50%) rotateX(25deg) rotateY(-25deg); }
+            100% { transform: translate(-50%, -50%) rotateX(25deg) rotateY(335deg); }
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 2.5rem 3rem;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.95);
+            border-bottom: 1px solid #333;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .brand {
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            text-align: center;
+            background: transparent;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .brand:hover {
+            color: #ccc;
+            transform: translateY(-2px);
+        }
+
+        .brand.back-mode {
+            border: 2px solid #fff;
+            padding: 1rem 2rem;
+            font-size: 1.8rem;
+            letter-spacing: 0.15em;
+        }
+
+        .brand.back-mode:hover {
+            background: #fff;
+            color: #000;
+            transform: translateY(-2px);
+        }
+
+        .main-content {
+            margin-top: 180px;
+            padding: 3rem;
+            position: relative;
+            z-index: 10;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-bottom: 200px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 400;
+            text-align: center;
+            margin-bottom: 4rem;
+            letter-spacing: 0.1em;
+            border-bottom: 1px solid #333;
+            padding-bottom: 1.5rem;
+        }
+
+        .albums-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 5rem;
+            margin-bottom: 4rem;
+            perspective: 1000px;
+            padding: 2rem;
+        }
+
+        .album-cube-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .album-cube {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+
+        .cube-side {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border: 2px solid #333;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            transition: all 0.3s ease;
+        }
+
+        .cube-side:hover {
+            border-color: #555;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+
+        .cube-side.front { 
+            transform: rotateY(0deg) translateZ(100px); 
+            background: linear-gradient(135deg, #1a1a1a, #333);
+        }
+        .cube-side.back { 
+            transform: rotateY(180deg) translateZ(100px); 
+        }
+        .cube-side.right { 
+            transform: rotateY(90deg) translateZ(100px); 
+        }
+        .cube-side.left { 
+            transform: rotateY(-90deg) translateZ(100px); 
+        }
+        .cube-side.top { 
+            transform: rotateX(90deg) translateZ(100px); 
+        }
+        .cube-side.bottom { 
+            transform: rotateX(-90deg) translateZ(100px); 
+        }
+
+        .album-info {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 0 2rem;
+        }
+
+        .album-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .album-count {
+            font-size: 0.9rem;
+            color: #888;
+            font-weight: 300;
+        }
+
+        .photo-grid {
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+            padding: 2rem;
+        }
+
+        .photo-grid.active {
+            display: grid;
+        }
+
+        .photo-item {
+            aspect-ratio: 1;
+            border: 2px solid #333;
+            background: #111;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .photo-item:hover {
+            border-color: #555;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.3s ease;
+            filter: brightness(0.9);
+        }
+
+        .photo-item:hover img {
+            filter: brightness(1.1);
+            transform: scale(1.02);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 5rem;
+            overflow: auto;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: calc(100vw - 10rem);
+            max-height: calc(100vh - 10rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border: 2px solid #333;
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: -80px;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #fff;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            font-family: inherit;
+            padding: 1rem 2rem;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-close:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .back-button {
+            display: none;
+            margin-bottom: 3rem;
+            padding: 1.5rem 2.5rem;
+            background: transparent;
+            border: 2px solid #fff;
+            color: #fff;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .back-button:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .back-button.active {
+            display: inline-block;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 5rem 3rem;
+            border: 2px solid #333;
+            background: rgba(0, 0, 0, 0.8);
+            margin: 3rem 0;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .empty-subtitle {
+            color: #888;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .folder-info {
+            border: 2px solid #333;
+            padding: 3rem;
+            margin-bottom: 4rem;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .folder-path {
+            font-family: inherit;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            color: #ccc;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .folder-instruction {
+            color: #888;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 3rem;
+            right: 3rem;
+            display: flex;
+            gap: 1.5rem;
+            z-index: 101;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 1rem;
+            border-radius: 4px;
+            border: 1px solid #333;
+        }
+
+        .control-btn {
+            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #fff;
+            color: #fff;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-btn:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1.5rem;
+            }
+            
+            .brand {
+                font-size: 1.8rem;
+            }
+
+            .brand.back-mode {
+                font-size: 1.4rem;
+                padding: 0.8rem 1.5rem;
+            }
+            
+            .main-content {
+                margin-top: 120px;
+                padding: 1.5rem;
+                padding-bottom: 200px;
+            }
+            
+            .albums-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 3rem;
+                padding: 1rem;
+            }
+            
+            .album-cube-container {
+                width: 130px;
+                height: 130px;
+            }
+            
+            .cube-side {
+                width: 130px;
+                height: 130px;
+                font-size: 0.8rem;
+            }
+            
+            .cube-side.front { transform: rotateY(0deg) translateZ(65px); }
+            .cube-side.back { transform: rotateY(180deg) translateZ(65px); }
+            .cube-side.right { transform: rotateY(90deg) translateZ(65px); }
+            .cube-side.left { transform: rotateY(-90deg) translateZ(65px); }
+            .cube-side.top { transform: rotateX(90deg) translateZ(65px); }
+            .cube-side.bottom { transform: rotateX(-90deg) translateZ(65px); }
+            
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 1.5rem;
+                padding: 1rem;
+            }
+            
+            .controls {
+                bottom: 1.5rem;
+                right: 1.5rem;
+                left: 1.5rem;
+                justify-content: center;
+                padding: 1.5rem;
+            }
+            
+            .control-btn {
+                flex: 1;
+                padding: 1.2rem;
+                font-size: 0.8rem;
+            }
+            
+            .bg-cube {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .cube-face {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .cube-face:nth-child(1) { transform: rotateY(0deg) translateZ(125px); }
+            .cube-face:nth-child(2) { transform: rotateY(90deg) translateZ(125px); }
+            .cube-face:nth-child(3) { transform: rotateY(180deg) translateZ(125px); }
+            .cube-face:nth-child(4) { transform: rotateY(-90deg) translateZ(125px); }
+            .cube-face:nth-child(5) { transform: rotateX(90deg) translateZ(125px); }
+            .cube-face:nth-child(6) { transform: rotateX(-90deg) translateZ(125px); }
+
+            .modal {
+                padding: 2rem;
+            }
+
+            .modal-content {
+                max-width: calc(100vw - 4rem);
+                max-height: calc(100vh - 4rem);
+            }
+
+            .modal-close {
+                top: -60px;
+                font-size: 0.8rem;
+                padding: 0.8rem 1.5rem;
+            }
+
+            .back-button {
+                padding: 1rem 1.8rem;
+                font-size: 0.9rem;
+                margin-bottom: 2rem;
+            }
+
+            .section-title {
+                font-size: 1.2rem;
+                margin-bottom: 3rem;
+                padding-bottom: 1rem;
+            }
+
+            .album-title {
+                font-size: 1rem;
+            }
+
+            .album-count {
+                font-size: 0.8rem;
+            }
+
+            .album-info {
+                margin-top: 2rem;
+                padding: 0 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .brand {
+                font-size: 1.5rem;
+            }
+
+            .brand.back-mode {
+                font-size: 1.2rem;
+                padding: 0.6rem 1.2rem;
+            }
+            
+            .main-content {
+                margin-top: 100px;
+                padding: 1rem;
+                padding-bottom: 220px;
+            }
+            
+            .albums-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 2rem;
+                padding: 0.5rem;
+            }
+            
+            .album-cube-container {
+                width: 110px;
+                height: 110px;
+            }
+            
+            .cube-side {
+                width: 110px;
+                height: 110px;
+                font-size: 0.7rem;
+            }
+            
+            .cube-side.front { transform: rotateY(0deg) translateZ(55px); }
+            .cube-side.back { transform: rotateY(180deg) translateZ(55px); }
+            .cube-side.right { transform: rotateY(90deg) translateZ(55px); }
+            .cube-side.left { transform: rotateY(-90deg) translateZ(55px); }
+            .cube-side.top { transform: rotateX(90deg) translateZ(55px); }
+            .cube-side.bottom { transform: rotateX(-90deg) translateZ(55px); }
+            
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+                gap: 1rem;
+                padding: 0.5rem;
+            }
+            
+            .controls {
+                padding: 1rem;
+                gap: 1rem;
+            }
+            
+            .control-btn {
+                padding: 1rem;
+                font-size: 0.7rem;
+            }
+
+            .back-button {
+                padding: 0.8rem 1.5rem;
+                font-size: 0.8rem;
+                margin-bottom: 2rem;
+            }
+
+            .section-title {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+
+            .album-info {
+                margin-top: 1.5rem;
+                padding: 0 0.5rem;
+            }
+        }
+
+        /* Scrollbar styling for better visibility */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #111;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="bg-cube">
+            <div class="cube-face"></div>
+            <div class="cube-face"></div>
+            <div class="cube-face"></div>
+            <div class="cube-face"></div>
+            <div class="cube-face"></div>
+            <div class="cube-face"></div>
+        </div>
+
+        <div class="header">
+            <button class="brand" id="brandButton" onclick="handleBrandClick()">NLZRK</button>
+        </div>
+
+        <div class="main-content">
+            <button class="back-button" onclick="showView('albums')">⇐ BACK</button>
+
+            <div class="section-title" id="sectionTitle">photo albums</div>
+
+            <div class="albums-grid" id="albumsGrid">
+                <!-- Albums will be dynamically loaded here -->
+            </div>
+
+            <div class="photo-grid" id="photoGrid">
+                <!-- Photos will be dynamically loaded here -->
+            </div>
+
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-title">no albums found</div>
+                <div class="empty-subtitle">
+                    create folders in ./albums/ directory<br>
+                    add photos to automatically generate albums
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="control-btn" onclick="refreshAlbums()">refresh</button>
+            <button class="control-btn" onclick="showInfo()">info</button>
+        </div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">close</button>
+            <img id="modalImage" src="" alt="">
+        </div>
+    </div>
+
+    <script>
+        // Album data based on your actual folder structure
+        const albums = {
+            'BDS': [
+                { name: 'L1010938.JPG', path: './albums/BDS/L1010938.JPG' },
+                { name: 'L1010939.JPG', path: './albums/BDS/L1010939.JPG' },
+                { name: 'L1010940.JPG', path: './albums/BDS/L1010940.JPG' }
+            ],
+            'friends': [
+                { name: 'L1010954.JPG', path: './albums/friends/L1010954.JPG' },
+                { name: 'L1010956.JPG', path: './albums/friends/L1010956.JPG' },
+                { name: 'L1010960.JPG', path: './albums/friends/L1010960.JPG' }
+            ],
+            'misc': [
+                { name: 'L1010941.JPG', path: './albums/misc/L1010941.JPG' },
+                { name: 'L1010944.JPG', path: './albums/misc/L1010944.JPG' },
+                { name: 'L1010946.JPG', path: './albums/misc/L1010946.JPG' }
+            ]
+        };
+
+        let currentView = 'albums';
+        let currentAlbum = null;
+
+        function updateBrandButton() {
+            const brandButton = document.getElementById('brandButton');
+            if (currentView === 'albums') {
+                brandButton.textContent = 'NLZRK';
+                brandButton.classList.remove('back-mode');
+            } else {
+                brandButton.textContent = '⇐ BACK';
+                brandButton.classList.add('back-mode');
+            }
+        }
+
+        function handleBrandClick() {
+            if (currentView !== 'albums') {
+                showView('albums');
+            }
+        }
+
+        function showView(view) {
+            if (view === 'albums') {
+                currentView = 'albums';
+                currentAlbum = null;
+                document.getElementById('albumsGrid').style.display = 'grid';
+                document.getElementById('photoGrid').classList.remove('active');
+                document.querySelector('.back-button').classList.remove('active');
+                document.getElementById('sectionTitle').textContent = 'photo albums';
+                updateBrandButton();
+                loadAlbums();
+            }
+        }
+
+        function loadAlbums() {
+            const grid = document.getElementById('albumsGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            if (Object.keys(albums).length === 0) {
+                emptyState.style.display = 'block';
+                grid.innerHTML = '';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            
+            grid.innerHTML = Object.entries(albums).map(([albumName, photos]) => {
+                const cubeId = `cube-${albumName}`;
+                const previewImages = photos.slice(0, 5); // Get first 5 images for cube faces
+                
+                return `
+                    <div>
+                        <div class="album-cube-container" onclick="openAlbum('${albumName}')">
+                            <div class="album-cube" id="${cubeId}">
+                                <div class="cube-side front">${albumName}</div>
+                                <div class="cube-side back" style="background-image: url('${previewImages[0]?.path || ''}')"></div>
+                                <div class="cube-side right" style="background-image: url('${previewImages[1]?.path || ''}')"></div>
+                                <div class="cube-side left" style="background-image: url('${previewImages[2]?.path || ''}')"></div>
+                                <div class="cube-side top" style="background-image: url('${previewImages[3]?.path || ''}')"></div>
+                                <div class="cube-side bottom" style="background-image: url('${previewImages[4]?.path || previewImages[0]?.path || ''}')"></div>
+                            </div>
+                        </div>
+                        <div class="album-info">
+                            <div class="album-title">${albumName}</div>
+                            <div class="album-count">${photos.length} images</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Add mouse movement listeners to each cube
+            Object.keys(albums).forEach(albumName => {
+                const cubeContainer = document.querySelector(`#cube-${albumName}`).parentElement;
+                const cube = document.querySelector(`#cube-${albumName}`);
+                
+                cubeContainer.addEventListener('mousemove', (e) => {
+                    const rect = cubeContainer.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    
+                    const mouseX = e.clientX - centerX;
+                    const mouseY = e.clientY - centerY;
+                    
+                    const rotateY = (mouseX / rect.width) * 60; // Max 60 degrees
+                    const rotateX = -(mouseY / rect.height) * 60; // Max 60 degrees, inverted
+                    
+                    cube.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                });
+                
+                cubeContainer.addEventListener('mouseleave', () => {
+                    cube.style.transform = 'rotateX(0deg) rotateY(0deg)';
+                });
+            });
+        }
+
+        function openAlbum(albumName) {
+            currentAlbum = albumName;
+            currentView = 'album';
+            document.getElementById('albumsGrid').style.display = 'none';
+            document.getElementById('photoGrid').classList.add('active');
+            document.querySelector('.back-button').classList.add('active');
+            document.getElementById('sectionTitle').textContent = albumName.toUpperCase();
+            updateBrandButton();
+
+            loadPhotos(albumName);
+        }
+
+        function loadPhotos(albumName) {
+            const grid = document.getElementById('photoGrid');
+            const photos = albums[albumName] || [];
+
+            grid.innerHTML = photos.map((photo, index) => `
+                <div class="photo-item" onclick="openModal('${photo.path}')">
+                    <img src="${photo.path}" alt="${photo.name}" loading="lazy">
+                </div>
+            `).join('');
+        }
+
+        function openModal(src) {
+            const modal = document.getElementById('modal');
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = src;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+            document.body.style.overflow = 'auto'; // Restore scrolling
+        }
+
+        function refreshAlbums() {
+            console.log('Scanning ./albums/ directory...');
+            loadAlbums();
+        }
+
+        function showInfo() {
+            const albumList = Object.keys(albums).join(', ');
+            alert(`ALBUM SYSTEM INFO
+
+DIRECTORY: ./albums/
+DETECTED ALBUMS: ${albumList}
+TOTAL IMAGES: ${Object.values(albums).reduce((sum, photos) => sum + photos.length, 0)}
+
+USAGE:
+1. Create subfolders in ./albums/
+2. Drop photos into subfolders
+3. Gallery auto-detects and displays
+4. Click refresh to rescan
+5. Hover over cubes to rotate them`);
+        }
+
+        // Event listeners
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                if (document.getElementById('modal').classList.contains('active')) {
+                    closeModal();
+                } else if (currentView !== 'albums') {
+                    showView('albums');
+                }
+            }
+        });
+
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Initialize
+        loadAlbums();
+        updateBrandButton();
+    </script>
+</body>
+</html>
